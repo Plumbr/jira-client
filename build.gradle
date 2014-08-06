@@ -1,0 +1,36 @@
+apply plugin: 'groovy'
+apply plugin: 'ivy-publish'
+
+project.ext.artifactoryCredentials = {
+  username = artifactoryUser
+  password = artifactoryPassword
+}
+
+repositories {
+  jcenter()
+}
+
+dependencies {
+  compile gradleApi()
+  compile localGroovy()
+  compile group: 'com.atlassian.jira', name: 'jira-rest-java-client', version: '1.1-m01'
+}
+
+sourceCompatibility = 1.7
+version = '0.1'
+group = 'eu.plumbr'
+
+publishing {
+  repositories {
+    ivy {
+      name = 'repo'
+      url "http://plumbr.artifactoryonline.com/plumbr/plugins-releases-local"
+      credentials(artifactoryCredentials)
+    }
+  }
+  publications {
+    plugin(IvyPublication) {
+      from components.java
+    }
+  }
+}
