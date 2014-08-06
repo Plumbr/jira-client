@@ -6,7 +6,7 @@ import org.junit.Test
 class JiraPluginTest {
 
   @Test
-  public void "without jira username not jiraVersion is set"(){
+  public void "without jira username no jiraVersion is set"(){
     def project = ProjectBuilder.builder().build()
 
     project.apply plugin: 'jira'
