@@ -20,18 +20,14 @@ import groovyx.net.http.ContentType
 class JiraPlugin implements Plugin<Project> {
 
     public static String earliestUnreleasedVersion(String jiraUser, String jiraPassword) {
-        final JerseyJiraRestClientFactory factory = new JerseyJiraRestClientFactory();
-        final URI jiraServerUri = new URI("https://plumbr.atlassian.net");
-        final JiraRestClient restClient = factory.createWithBasicHttpAuthentication(jiraServerUri, jiraUser, jiraPassword);
-        final NullProgressMonitor pm = new NullProgressMonitor();
-        final JiraProject p = restClient.getProjectClient().getProject("DTS", pm);
-
+        final JiraRestClient restClient = JiraPluginBase.factory.createWithBasicHttpAuthentication(JiraPluginBase.jiraServerUri, jiraUser, jiraPassword);
+        final JiraProject p = restClient.getProjectClient().getProject("DTS", JiraPluginBase.pm);
         p.getVersions().findAll { !it.isReleased() }.sort { it.releaseDate }.first().name
     }
 
     @Override
     void apply(Project project) {
-        project.task('changeJiraStatusTask', type: JiraStatusTask)
+        project.task('closeReleasedIssues', type: JiraStatusTask)
         project.extensions.create('jira', JiraPluginExtension)
         if (project.hasProperty('jiraUser')) {
             project.jira.user = project.property('jiraUser')
@@ -78,51 +74,47 @@ class JiraStatusTask extends DefaultTask {
         def restClient = new RESTClient("https://plumbr.artifactoryonline.com/plumbr/api/build/dashboard/${buildNum}")
         restClient.auth.basic project.jira.artifactoryUser, project.jira.artifactoryPassword
         def jsonResponse = restClient.get(contentType: ContentType.JSON).data
-        if (_isRelease(jsonResponse))
-            if (_getKeys(jsonResponse) != null)
-                _getKeys(jsonResponse).each { v -> _toClosedStatus(v) }
+        if (isRelease(jsonResponse)) {
+            def keys = getKeys(jsonResponse)
+            if (keys != null)
+                keys.each { v -> toClosedStatus(v) }
             else
                 println("No issues for build #${buildNum}")
+        }
         else
             println("Build #${buildNum} isn't in RELEASE status.")
     }
 
-    private void _toClosedStatus(def issueKey) {
-        final JerseyJiraRestClientFactory factory = new JerseyJiraRestClientFactory();
-        final URI jiraServerUri = new URI("https://plumbr.atlassian.net");
-        final JiraRestClient restClient = factory.createWithBasicHttpAuthentication(jiraServerUri, project.jira.user, project.jira.password);
-        final NullProgressMonitor pm = new NullProgressMonitor();
-        final Issue issue = restClient.getIssueClient().getIssue(issueKey, pm)
-        final Iterable<Transition> availableTransitions = restClient.issueClient.getTransitions(issue.getTransitionsUri(), pm);
-        final Transition closeIssueTransition = _getTransitionById(availableTransitions, 701);
+    private void toClosedStatus(def issueKey) {
+        final JiraRestClient restClient = JiraPluginBase.factory.createWithBasicHttpAuthentication(JiraPluginBase.jiraServerUri, project.jira.user, project.jira.password);
+        final Issue issue = restClient.getIssueClient().getIssue(issueKey, JiraPluginBase.pm)
+        final Iterable<Transition> availableTransitions = restClient.issueClient.getTransitions(issue.getTransitionsUri(), JiraPluginBase.pm);
+        final Transition closeIssueTransition = getTransitionById(availableTransitions, 701);
         if(closeIssueTransition != null) {
             final TransitionInput transitionInput = new TransitionInput(closeIssueTransition.getId(),
                     Comment.valueOf("Issue was closed automatically from JiraPlugin."));
-            restClient.getIssueClient().transition(issue.getTransitionsUri(), transitionInput, pm);
+            restClient.getIssueClient().transition(issue.getTransitionsUri(), transitionInput, JiraPluginBase.pm);
             println("SUCCESS: Status for task #${issueKey} was changed to CLOSED");
         }
         else
             println("Problem during status change for task: #${issueKey}. NOTE: Current task status should be RESOLVED");
     }
 
-    private static boolean _isRelease(def response) {
+    private static boolean isRelease(def response) {
         if (response["buildInfo"]["statuses"] == null)
             return false
         else
             return response["buildInfo"]["statuses"].last()["status"] == "release"
     }
 
-    private static List<String> _getKeys(def response) {
+    private static List<Object> getKeys(def response) {
         if (response["buildInfo"]["issues"]["affectedIssues"] == null)
             return null
-        else {
-            def keys = new ArrayList<String>()
-            response["buildInfo"]["issues"]["affectedIssues"].each { v -> keys.add(v["key"]) }
-            return keys
-        }
+        else
+            return response["buildInfo"]["issues"]["affectedIssues"].collect { it['key'] }
     }
 
-    private static Transition _getTransitionById(Iterable<Transition> transitions, int transitionId) {
+    private static Transition getTransitionById(Iterable<Transition> transitions, int transitionId) {
         for (Transition transition : transitions) {
             if (transition.getId().equals(transitionId)) {
                 return transition
@@ -130,4 +122,10 @@ class JiraStatusTask extends DefaultTask {
         }
         return null
     }
+}
+
+class JiraPluginBase {
+    public static final JerseyJiraRestClientFactory factory = new JerseyJiraRestClientFactory();
+    public static final URI jiraServerUri = new URI("https://plumbr.atlassian.net");
+    public static final NullProgressMonitor pm = new NullProgressMonitor();
 }
