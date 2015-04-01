@@ -67,7 +67,7 @@ class JiraStatusTask extends DefaultTask {
 
     @TaskAction
     def executeStatusChange() {
-        changeJiraStatus(buildNum)
+        changeJiraStatusit s(buildNum)
     }
 
     public void changeJiraStatus(def buildNum) {
