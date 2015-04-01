@@ -5,25 +5,29 @@ import org.junit.Test
 
 class JiraPluginTest {
 
-  @Test
-  public void "without jira username no jiraVersion is set"(){
-    def project = ProjectBuilder.builder().build()
+    @Test
+    public void "without jira username no jiraVersion is set"() {
+        def project = ProjectBuilder.builder().build()
 
-    project.apply plugin: 'jira'
+        project.apply plugin: 'jira'
 
-    assert project.jira.version == null
-  }
+        assert project.jira.version == null
+    }
 
-  @Test
-  public void "jira properties are set from jira*"(){
-    def project = ProjectBuilder.builder().build()
+    @Test
+    public void "jira properties are set from jira*"() {
+        def project = ProjectBuilder.builder().build()
 
-    project.extensions.getByName('ext').setProperty('jiraUser', 'us')
-    project.extensions.getByName('ext').setProperty('jiraPassword', 'pw')
-    project.apply plugin: 'jira'
+        project.extensions.getByName('ext').setProperty('jiraUser', 'us')
+        project.extensions.getByName('ext').setProperty('jiraPassword', 'pw')
+        project.extensions.getByName('ext').setProperty('artifactoryUser', 'artUser')
+        project.extensions.getByName('ext').setProperty('artifactoryPassword', 'artPassword')
+        project.apply plugin: 'jira'
 
-    assert project.jira.user == 'us'
-    assert project.jira.password == 'pw'
-  }
+        assert project.jira.user == 'us'
+        assert project.jira.password == 'pw'
+        assert project.jira.artifactoryUser == 'artUser'
+        assert project.jira.artifactoryPassword == 'artPassword'
+    }
 
 }
