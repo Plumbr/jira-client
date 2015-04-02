@@ -6,7 +6,7 @@ import org.gradle.api.Project
 import org.gradle.testfixtures.ProjectBuilder
 import spock.lang.Specification
 
-class JiraPluginTest extends Specification {
+class PlumbrIntegrationPluginTest extends Specification {
   private static final CLOSE_ISSUES_TASK_NAME = 'closeAgentReleasedIssues'
   Project project
 
@@ -19,7 +19,7 @@ class JiraPluginTest extends Specification {
     project.tasks.findByName(CLOSE_ISSUES_TASK_NAME) == null
 
     when:
-    project.apply plugin: 'jira'
+    project.apply plugin: 'plumbr-integration'
 
     then:
     def task = project.tasks.findByName(CLOSE_ISSUES_TASK_NAME)
@@ -30,7 +30,7 @@ class JiraPluginTest extends Specification {
   def "close issues task gets build number from project's version"() {
     when:
     project.version = '1984'
-    project.apply plugin: 'jira'
+    project.apply plugin: 'plumbr-integration'
 
     then:
     CloseReleasedIssuesTask task = project.tasks.findByName(CLOSE_ISSUES_TASK_NAME) as CloseReleasedIssuesTask
@@ -41,7 +41,7 @@ class JiraPluginTest extends Specification {
   def "close issues task closes all resolved issues released in given build"() {
     setup:
     project.version = '1984'
-    project.apply plugin: 'jira'
+    project.apply plugin: 'plumbr-integration'
 
     CloseReleasedIssuesTask task = project.tasks.findByName(CLOSE_ISSUES_TASK_NAME) as CloseReleasedIssuesTask
     task.jiraClient = Mock(JiraClient)
@@ -60,7 +60,7 @@ class JiraPluginTest extends Specification {
   def "close issues task handles gracefully build without issues"() {
     setup:
     project.version = '1984'
-    project.apply plugin: 'jira'
+    project.apply plugin: 'plumbr-integration'
 
     CloseReleasedIssuesTask task = project.tasks.findByName(CLOSE_ISSUES_TASK_NAME) as CloseReleasedIssuesTask
     task.jiraClient = Mock(JiraClient)
@@ -79,7 +79,7 @@ class JiraPluginTest extends Specification {
     project.tasks.findByName("closePortalReleasedIssues") == null
 
     when:
-    project.apply plugin: 'jira'
+    project.apply plugin: 'plumbr-integration'
 
     then:
     CloseReleasedIssuesTask task = project.tasks.findByName("closePortalReleasedIssues") as CloseReleasedIssuesTask

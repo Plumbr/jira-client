@@ -20,7 +20,7 @@ class ArtifactoryIntegrationTest extends Specification {
     !project.hasProperty(ARTIFACTORY_CREDENTIALS_PROPERTY_NAME)
 
     when:
-    project.apply plugin: 'jira'
+    project.apply plugin: 'plumbr-integration'
 
     then:
     def credentials = project.property(ARTIFACTORY_CREDENTIALS_PROPERTY_NAME)

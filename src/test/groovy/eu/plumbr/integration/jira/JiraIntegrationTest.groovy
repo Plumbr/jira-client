@@ -20,7 +20,7 @@ class JiraIntegrationTest extends Specification {
 
     when:
     def project = ProjectBuilder.builder().build()
-    project.apply plugin: 'jira'
+    project.apply plugin: 'plumbr-integration'
 
     then:
     noExceptionThrown()
@@ -37,7 +37,7 @@ class JiraIntegrationTest extends Specification {
     def jiraClient = Mock(JiraClient)
     JiraIntegration.getJiraClient(_, _) >> jiraClient
     jiraClient.currentVersion() >> '42'
-    project.apply plugin: 'jira'
+    project.apply plugin: 'plumbr-integration'
 
     then:
     project.property(propertyName) == '42'

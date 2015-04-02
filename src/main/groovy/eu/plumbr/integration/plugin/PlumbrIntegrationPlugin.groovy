@@ -5,7 +5,7 @@ import eu.plumbr.integration.jira.JiraIntegration
 import org.gradle.api.Plugin
 import org.gradle.api.Project
 
-class JiraPlugin implements Plugin<Project> {
+class PlumbrIntegrationPlugin implements Plugin<Project> {
 
   @Override
   void apply(Project project) {
