@@ -10,10 +10,19 @@ repositories {
   jcenter()
 }
 
+configurations.all {
+  resolutionStrategy {
+    force "org.codehaus.groovy:groovy-all:2.3.9"
+  }
+}
+
 dependencies {
   compile gradleApi()
-  compile localGroovy()
-  compile group: 'com.atlassian.jira', name: 'jira-rest-java-client', version: '1.1-m01'
+  compile 'org.codehaus.groovy:groovy-all:2.3.9'
+  compile 'com.atlassian.jira:jira-rest-java-client:1.1-m01'
+  compile 'org.codehaus.groovy.modules.http-builder:http-builder:0.7'
+  compile 'org.spockframework:spock-core:1.0-groovy-2.3'
+  testRuntime 'cglib:cglib-nodep:2.2.2'
 }
 
 sourceCompatibility = 1.7
@@ -24,7 +33,7 @@ publishing {
   repositories {
     ivy {
       name = 'repo'
-      url "http://plumbr.artifactoryonline.com/plumbr/plugins-releases-local"
+      url = "http://plumbr.artifactoryonline.com/plumbr/plugins-releases-local"
       credentials(artifactoryCredentials)
     }
   }
