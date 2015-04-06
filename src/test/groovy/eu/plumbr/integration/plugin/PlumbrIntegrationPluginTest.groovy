@@ -51,7 +51,7 @@ class PlumbrIntegrationPluginTest extends Specification {
     task.run()
 
     then:
-    1 * task.artifactoryClient.releasedIssues('Agent', '1984') >> ['a', 'c', 'b']
+    1 * task.artifactoryClient.getReleasedIssues('Agent', '1984') >> ['a', 'c', 'b']
     1 * task.jiraClient.closeResolvedIssue('a')
     1 * task.jiraClient.closeResolvedIssue('b')
     1 * task.jiraClient.closeResolvedIssue('c')
@@ -70,7 +70,7 @@ class PlumbrIntegrationPluginTest extends Specification {
     task.run()
 
     then:
-    1 * task.artifactoryClient.releasedIssues('Agent', '1984') >> []
+    1 * task.artifactoryClient.getReleasedIssues('Agent', '1984') >> []
     0 * task.jiraClient.closeResolvedIssue(_)
   }
 

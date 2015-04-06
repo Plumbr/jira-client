@@ -26,7 +26,7 @@ class ArtifactoryRestClientTest extends Specification {
     artifactoryRestClient.restClient.get(_) >> result
 
     expect:
-    artifactoryRestClient.releasedIssues('Agent', '42') == []
+    artifactoryRestClient.getReleasedIssues('Agent', '42') == []
   }
 
   def "for 'release' build all connected issues are returned"() {
@@ -43,7 +43,7 @@ class ArtifactoryRestClientTest extends Specification {
     artifactoryRestClient.restClient.get(_) >> result
 
     expect:
-    artifactoryRestClient.releasedIssues('Agent', '42') == ['K-1', 'T-2']
+    artifactoryRestClient.getReleasedIssues('Agent', '42') == ['K-1', 'T-2']
   }
 
   def "can handle build info without statuses"() {
@@ -57,7 +57,7 @@ class ArtifactoryRestClientTest extends Specification {
     this.artifactoryRestClient.restClient.get(_) >> result
 
     expect:
-    this.artifactoryRestClient.releasedIssues('Agent', '42') == []
+    this.artifactoryRestClient.getReleasedIssues('Agent', '42') == []
   }
 
   def "can handle non-existing build number"() {
@@ -65,7 +65,7 @@ class ArtifactoryRestClientTest extends Specification {
     artifactoryRestClient.restClient.get(_) >> { throw Mock(HttpResponseException) }
 
     expect:
-    artifactoryRestClient.releasedIssues('Agent', '42') == []
+    artifactoryRestClient.getReleasedIssues('Agent', '42') == []
 
   }
 }

@@ -17,7 +17,7 @@ class ArtifactoryRestClient implements ArtifactoryClient {
   }
 
   @Override
-  List<String> releasedIssues(String buildName, String buildNumber) {
+  List<String> getReleasedIssues(String buildName, String buildNumber) {
     try {
       def jsonResponse = this.restClient.get(path: "/plumbr/api/build/${buildName}/${buildNumber}", contentType: ContentType.JSON).data
       return isRelease(jsonResponse) ? getKeys(jsonResponse) : []
