@@ -10,6 +10,7 @@ import com.atlassian.jira.rest.client.domain.input.TransitionInput
 import com.atlassian.jira.rest.client.internal.jersey.JerseyJiraRestClientFactory
 
 class JiraRestClient implements JiraClient {
+  public static final int MAGIC_ID_OF_OUR_TRANSITION = 701
   private final ProgressMonitor progressMonitor = new NullProgressMonitor()
   private final URI jiraServerUri = new URI("https://plumbr.atlassian.net");
   private final String jiraUser
@@ -32,7 +33,7 @@ class JiraRestClient implements JiraClient {
   void closeResolvedIssue(String issueKey) {
     IssueRestClient issueClient = jiraClient.issueClient
     final Issue issue = issueClient.getIssue(issueKey, progressMonitor)
-    final TransitionInput transitionInput = new TransitionInput(701, Comment.valueOf("Issue was closed automatically from JiraPlugin."));
+    final TransitionInput transitionInput = new TransitionInput(MAGIC_ID_OF_OUR_TRANSITION, Comment.valueOf("Issue was closed automatically from JiraPlugin."));
     issueClient.transition(issue.getTransitionsUri(), transitionInput, progressMonitor);
     println("SUCCESS: Status for task #${issueKey} was changed to CLOSED");
   }

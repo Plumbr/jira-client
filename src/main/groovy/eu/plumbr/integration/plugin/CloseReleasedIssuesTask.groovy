@@ -22,7 +22,7 @@ class CloseReleasedIssuesTask extends DefaultTask {
 
   @TaskAction
   def run() {
-    def keys = artifactoryClient.releasedIssues(buildName, buildNumber)
+    def keys = artifactoryClient.getReleasedIssues(buildName, buildNumber)
     keys.each { jiraClient.closeResolvedIssue(it) }
   }
 

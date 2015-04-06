@@ -14,7 +14,7 @@ class JiraIntegration {
 
     def jiraClient = null
     if (jiraUser) {
-      jiraClient = getJiraClient(jiraUser, jiraPassword)
+      jiraClient = makeJiraClient(jiraUser, jiraPassword)
       extraProperties.set(JIRA_VERSION_PROPERTY_NAME, jiraClient.currentVersion())
     } else {
       extraProperties.set(JIRA_VERSION_PROPERTY_NAME, null)
@@ -22,7 +22,7 @@ class JiraIntegration {
     return jiraClient
   }
 
-  static JiraClient getJiraClient(String jiraUser, String jiraPassword) {
+  static JiraClient makeJiraClient(String jiraUser, String jiraPassword) {
     return new JiraRestClient(jiraUser, jiraPassword)
   }
 }
