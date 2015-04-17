@@ -35,7 +35,7 @@ class JiraIntegrationTest extends Specification {
     when:
     GroovySpy(JiraIntegration, global: true)
     def jiraClient = Mock(JiraClient)
-    JiraIntegration.makeJiraClient(_, _) >> jiraClient
+    JiraIntegration.makeJiraClient(_, _, _) >> jiraClient
     jiraClient.currentVersion() >> '42'
     project.apply plugin: 'plumbr-integration'
 

@@ -8,10 +8,14 @@ class ArtifactoryIntegration {
   static ArtifactoryClient apply(Project project) {
     def extraProperties = project.getExtensions().getExtraProperties()
 
-    def artifactoryCredentials = [username: Util.propertySafe(project, 'artifactoryUser'),
-                                  password: Util.propertySafe(project, 'artifactoryPassword')]
+    def artifactoryUser = Util.propertySafe(project, 'artifactoryUser')
+    def artifactoryPassword = Util.propertySafe(project, 'artifactoryPassword')
+    def artifactoryCredentials = {
+      username = artifactoryUser
+      password = artifactoryPassword
+    }
     extraProperties.set('artifactoryCredentials', artifactoryCredentials)
-    return artifactoryCredentials.username ? makeArtifactoryClient(artifactoryCredentials.username, artifactoryCredentials.password) : null
+    return artifactoryUser ? makeArtifactoryClient(artifactoryUser, artifactoryPassword) : null
   }
 
   static ArtifactoryClient makeArtifactoryClient(String artifactoryUser, String artifactoryPassword) {

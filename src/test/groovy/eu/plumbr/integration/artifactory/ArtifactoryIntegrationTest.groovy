@@ -25,7 +25,6 @@ class ArtifactoryIntegrationTest extends Specification {
     then:
     def credentials = project.property(ARTIFACTORY_CREDENTIALS_PROPERTY_NAME)
     credentials != null
-    credentials.username == 'artifactoryUser'
-    credentials.password == 'artifactoryPassword'
+    credentials instanceof Closure
   }
 }
