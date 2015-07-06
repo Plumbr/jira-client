@@ -87,4 +87,19 @@ class PlumbrIntegrationPluginTest extends Specification {
     task.description != null
     task.buildName == 'Portal'
   }
+
+  def "delete old builds rule should create requested task"() {
+    expect:
+    project.tasks.findByName("deleteDashboardStagedBuilds") == null
+
+    when:
+    project.apply plugin: 'plumbr-integration'
+
+    then:
+    DeleteOldArtifactsTask task = project.tasks.findByName("deleteDashboardStagedBuilds") as DeleteOldArtifactsTask
+    task != null
+    task.description != null
+    task.buildName == 'Dashboard'
+  }
+
 }
