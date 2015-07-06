@@ -46,8 +46,12 @@ items.find({
 """
     def answer = restClient.post(path: '/plumbr/api/search/aql', body: query, contentType: ContentType.JSON).data
     def oldBuilds = (answer.results['properties']*.find { it.key == 'build.number' }.value.sort() as Set).join(',')
-    logger.quiet("Deleting old staged build $oldBuilds")
-    restClient.delete(path: "/plumbr/api/build/$buildName", query: ['buildNumbers': oldBuilds, 'artifacts': 1])
+    if (oldBuilds) {
+      logger.quiet("Deleting old staged build $oldBuilds")
+      restClient.delete(path: "/plumbr/api/build/$buildName", query: ['buildNumbers': oldBuilds, 'artifacts': 1])
+    } else {
+      logger.quiet('No old staged builds found.')
+    }
   }
 
   private static boolean isRelease(def response) {
