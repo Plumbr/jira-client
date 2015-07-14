@@ -1,5 +1,6 @@
 apply plugin: 'groovy'
 apply plugin: 'ivy-publish'
+apply plugin: 'java-gradle-plugin'
 
 project.ext.artifactoryCredentials = {
   username = artifactoryUser
@@ -26,7 +27,7 @@ dependencies {
 }
 
 sourceCompatibility = 1.7
-version = '0.2.4'
+version = '0.3.2'
 group = 'eu.plumbr'
 
 publishing {

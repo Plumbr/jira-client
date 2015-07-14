@@ -13,6 +13,7 @@ class PlumbrIntegrationPlugin implements Plugin<Project> {
     def artifactoryClient = ArtifactoryIntegration.apply(project)
     CloseReleasedIssuesTask.apply(project, jiraClient, artifactoryClient)
     DeleteOldArtifactsTask.apply(project, artifactoryClient)
+    PromoteBuildTask.apply(project, artifactoryClient)
   }
 }
 

@@ -5,7 +5,7 @@ import groovyx.net.http.RESTClient
 import spock.lang.Specification
 
 class ArtifactoryRestClientTest extends Specification {
-  private artifactoryRestClient
+  private ArtifactoryRestClient artifactoryRestClient
 
   def setup() {
     artifactoryRestClient = new ArtifactoryRestClient('a', 'b')
@@ -66,6 +66,5 @@ class ArtifactoryRestClientTest extends Specification {
 
     expect:
     artifactoryRestClient.getReleasedIssues('Agent', '42') == []
-
   }
 }

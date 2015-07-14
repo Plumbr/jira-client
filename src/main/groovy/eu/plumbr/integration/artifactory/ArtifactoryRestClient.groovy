@@ -54,6 +54,16 @@ items.find({
     }
   }
 
+  @Override
+  void promoteBuild(String buildName, String buildNumber, String targetRepo) {
+    logger.quiet('Promoting {}:{} to {}', buildName, buildNumber, targetRepo)
+    restClient.post(
+        path: "/plumbr/api/build/promote/${buildName}/${buildNumber}",
+        body: [status: targetRepo, targetRepo: targetRepo],
+        contentType: ContentType.JSON)
+    logger.quiet('Promotion successful')
+  }
+
   private static boolean isRelease(def response) {
     if (response.buildInfo.statuses != null) {
       return response.buildInfo.statuses.sort { it.timestamp }.last().status == "release"

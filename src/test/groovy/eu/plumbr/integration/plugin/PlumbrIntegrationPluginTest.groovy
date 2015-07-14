@@ -19,7 +19,7 @@ class PlumbrIntegrationPluginTest extends Specification {
     project.tasks.findByName(CLOSE_ISSUES_TASK_NAME) == null
 
     when:
-    project.apply plugin: 'plumbr-integration'
+    project.apply plugin: 'eu.plumbr.integration'
 
     then:
     def task = project.tasks.findByName(CLOSE_ISSUES_TASK_NAME)
@@ -30,7 +30,7 @@ class PlumbrIntegrationPluginTest extends Specification {
   def "close issues task gets build number from project's version"() {
     when:
     project.version = '1984'
-    project.apply plugin: 'plumbr-integration'
+    project.apply plugin: 'eu.plumbr.integration'
 
     then:
     CloseReleasedIssuesTask task = project.tasks.findByName(CLOSE_ISSUES_TASK_NAME) as CloseReleasedIssuesTask
@@ -41,7 +41,7 @@ class PlumbrIntegrationPluginTest extends Specification {
   def "close issues task closes all resolved issues released in given build"() {
     setup:
     project.version = '1984'
-    project.apply plugin: 'plumbr-integration'
+    project.apply plugin: 'eu.plumbr.integration'
 
     CloseReleasedIssuesTask task = project.tasks.findByName(CLOSE_ISSUES_TASK_NAME) as CloseReleasedIssuesTask
     task.jiraClient = Mock(JiraClient)
@@ -60,7 +60,7 @@ class PlumbrIntegrationPluginTest extends Specification {
   def "close issues task handles gracefully build without issues"() {
     setup:
     project.version = '1984'
-    project.apply plugin: 'plumbr-integration'
+    project.apply plugin: 'eu.plumbr.integration'
 
     CloseReleasedIssuesTask task = project.tasks.findByName(CLOSE_ISSUES_TASK_NAME) as CloseReleasedIssuesTask
     task.jiraClient = Mock(JiraClient)
@@ -79,7 +79,7 @@ class PlumbrIntegrationPluginTest extends Specification {
     project.tasks.findByName("closePortalReleasedIssues") == null
 
     when:
-    project.apply plugin: 'plumbr-integration'
+    project.apply plugin: 'eu.plumbr.integration'
 
     then:
     CloseReleasedIssuesTask task = project.tasks.findByName("closePortalReleasedIssues") as CloseReleasedIssuesTask
@@ -93,13 +93,30 @@ class PlumbrIntegrationPluginTest extends Specification {
     project.tasks.findByName("deleteDashboardStagedBuilds") == null
 
     when:
-    project.apply plugin: 'plumbr-integration'
+    project.apply plugin: 'eu.plumbr.integration'
 
     then:
     DeleteOldArtifactsTask task = project.tasks.findByName("deleteDashboardStagedBuilds") as DeleteOldArtifactsTask
     task != null
     task.description != null
     task.buildName == 'Dashboard'
+  }
+
+  def "build promotion rule should create requested task"() {
+    expect:
+    project.tasks.findByName("promoteOOMToStaging") == null
+
+    when:
+    project.version = '42.2015'
+    project.apply plugin: 'eu.plumbr.integration'
+
+    then:
+    PromoteBuildTask task = project.tasks.findByName("promoteOOMToStaging") as PromoteBuildTask
+    task != null
+    task.description != null
+    task.buildName == 'OOM'
+    task.targetRepo == 'staging'
+    task.buildNumber == project.version
   }
 
 }
