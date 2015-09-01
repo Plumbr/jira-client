@@ -7,11 +7,31 @@ import org.gradle.testfixtures.ProjectBuilder
 import spock.lang.Specification
 
 class PlumbrIntegrationPluginTest extends Specification {
-  private static final CLOSE_ISSUES_TASK_NAME = 'closeAgentReleasedIssues'
+  private static final String CLOSE_ISSUES_TASK_NAME = 'closeAgentReleasedIssues'
+  private static final String buildNumberEnvironmentProperty = 'SOURCE_BUILD_NUMBER'
   Project project
 
   def setup() {
     project = ProjectBuilder.builder().build()
+  }
+
+  def "buildNumber property is added to the project with default value"() {
+    when:
+    System.clearProperty(buildNumberEnvironmentProperty)
+    project.apply plugin: 'eu.plumbr.integration'
+
+    then:
+    project.buildNumber == 'SNAPSHOT'
+  }
+
+  def "buildNumber is added to the project from environment"() {
+    when:
+    System.setProperty(buildNumberEnvironmentProperty, '42')
+    project.apply plugin: 'eu.plumbr.integration'
+
+    then:
+    project.buildNumber == '42'
+
   }
 
   def "close issues task is added"() {
@@ -107,7 +127,7 @@ class PlumbrIntegrationPluginTest extends Specification {
     project.tasks.findByName("promoteOOMToStaging") == null
 
     when:
-    project.version = '42.2015'
+    System.setProperty(buildNumberEnvironmentProperty, '42')
     project.apply plugin: 'eu.plumbr.integration'
 
     then:
@@ -116,7 +136,7 @@ class PlumbrIntegrationPluginTest extends Specification {
     task.description != null
     task.buildName == 'OOM'
     task.targetRepo == 'staging'
-    task.buildNumber == project.version
+    task.buildNumber == '42'
   }
 
 }

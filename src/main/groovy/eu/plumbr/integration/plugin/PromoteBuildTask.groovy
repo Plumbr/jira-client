@@ -28,12 +28,11 @@ class PromoteBuildTask extends DefaultTask {
         PromoteBuildTask task = project.task(taskName, type: PromoteBuildTask) as PromoteBuildTask
         task.buildName = matcher.group(1)
         task.targetRepo = matcher.group(2).toLowerCase()
-        task.buildNumber = project.version
+        task.buildNumber = project.buildNumber
         if (artifactoryClient) {
           task.artifactoryClient = artifactoryClient
         }
       }
     }
   }
-
 }
