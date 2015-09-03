@@ -139,4 +139,27 @@ class PlumbrIntegrationPluginTest extends Specification {
     task.buildNumber == '42'
   }
 
+  def "artifactory client is created in project if user is given"() {
+    expect:
+    !project.hasProperty('artifactoryClient')
+
+    when:
+    project.ext.artifactoryUser = 'user'
+    project.apply plugin: 'eu.plumbr.integration'
+
+    then:
+    project.artifactoryClient instanceof ArtifactoryClient
+  }
+
+  def "artifactory client property is created in project if no artifactory user is given"() {
+    expect:
+    !project.hasProperty('artifactoryClient')
+
+    when:
+    project.apply plugin: 'eu.plumbr.integration'
+
+    then:
+    !project.hasProperty('artifactoryClient')
+  }
+
 }

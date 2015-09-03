@@ -15,7 +15,13 @@ class ArtifactoryIntegration {
       password = artifactoryPassword
     }
     extraProperties.set('artifactoryCredentials', artifactoryCredentials)
-    return artifactoryUser ? makeArtifactoryClient(artifactoryUser, artifactoryPassword) : null
+    if (artifactoryUser) {
+      def artifactoryClient = makeArtifactoryClient(artifactoryUser, artifactoryPassword)
+      extraProperties.set('artifactoryClient', artifactoryClient)
+      return artifactoryClient
+    } else {
+      return null
+    }
   }
 
   static ArtifactoryClient makeArtifactoryClient(String artifactoryUser, String artifactoryPassword) {
