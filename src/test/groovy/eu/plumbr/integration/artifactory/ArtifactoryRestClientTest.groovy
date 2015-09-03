@@ -67,4 +67,16 @@ class ArtifactoryRestClientTest extends Specification {
     expect:
     artifactoryRestClient.getReleasedIssues('Agent', '42') == []
   }
+
+  def "can find plumbr version"() {
+    setup:
+    artifactoryRestClient.restClient.get(_) >> '15.09.03.4492'
+
+    when:
+    def plumbrVersion = artifactoryRestClient.latestBuildVersion('agent')
+
+    then:
+    plumbrVersion.version == '15.09.03'
+    plumbrVersion.buildNumber == '4492'
+  }
 }

@@ -1,5 +1,6 @@
 package eu.plumbr.integration.artifactory
 
+import eu.plumbr.integration.PlumbrVersion
 import groovyx.net.http.ContentType
 import groovyx.net.http.HttpResponseException
 import groovyx.net.http.RESTClient
@@ -62,6 +63,15 @@ items.find({
         body: [status: targetRepo, targetRepo: targetRepo],
         contentType: ContentType.JSON)
     logger.quiet('Promotion successful')
+  }
+
+  @Override
+  PlumbrVersion latestBuildVersion(String artifactId, String version = '??.*') {
+    new PlumbrVersion(restClient.get(
+        path: '/plumbr/api/search/latestVersion',
+        query: [g: 'eu.plumbr', a: artifactId, repos: 'builds', v: version],
+        contentType: ContentType.TEXT
+    ).data.text as String)
   }
 
   private static boolean isRelease(def response) {
