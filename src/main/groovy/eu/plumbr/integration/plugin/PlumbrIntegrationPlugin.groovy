@@ -11,7 +11,7 @@ class PlumbrIntegrationPlugin implements Plugin<Project> {
   void apply(Project project) {
     def jiraClient = JiraIntegration.apply(project)
     def artifactoryClient = ArtifactoryIntegration.apply(project)
-    BuildNumberTask.apply(project)
+    PlumbrVersionTask.apply(project)
     CloseReleasedIssuesTask.apply(project, jiraClient, artifactoryClient)
     DeleteOldArtifactsTask.apply(project, artifactoryClient)
     PromoteBuildTask.apply(project, artifactoryClient)

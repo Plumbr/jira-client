@@ -4,8 +4,13 @@ import groovy.transform.Canonical
 
 @Canonical
 class PlumbrVersion {
-  String version
-  String buildNumber
+  final String version
+  final String buildNumber
+
+  PlumbrVersion(String version, String buildNumber) {
+    this.version = version
+    this.buildNumber = buildNumber
+  }
 
   PlumbrVersion(String fullVersion) {
     if (fullVersion.contains('.')) {
@@ -13,6 +18,7 @@ class PlumbrVersion {
       this.version = matcher[0][1]
       this.buildNumber = matcher[0][2] ?: null //to change '' to null
     } else {
+      this.version = null
       this.buildNumber = fullVersion
     }
   }
