@@ -8,30 +8,15 @@ import spock.lang.Specification
 
 class PlumbrIntegrationPluginTest extends Specification {
   private static final String CLOSE_ISSUES_TASK_NAME = 'closeAgentReleasedIssues'
-  private static final String buildNumberEnvironmentProperty = 'SOURCE_BUILD_NUMBER'
   Project project
 
   def setup() {
-    project = ProjectBuilder.builder().build()
+    project = ProjectBuilder.builder().withName('portal').build()
+    System.setProperty(PlumbrVersionTask.SOURCE_VERSION, '1.2.3.1984')
   }
 
-  def "buildNumber property is added to the project with default value"() {
-    when:
-    System.clearProperty(buildNumberEnvironmentProperty)
-    project.apply plugin: 'eu.plumbr.integration'
-
-    then:
-    project.buildNumber == 'SNAPSHOT'
-  }
-
-  def "buildNumber is added to the project from environment"() {
-    when:
-    System.setProperty(buildNumberEnvironmentProperty, '42')
-    project.apply plugin: 'eu.plumbr.integration'
-
-    then:
-    project.buildNumber == '42'
-
+  def cleanup() {
+    System.clearProperty(PlumbrVersionTask.SOURCE_VERSION)
   }
 
   def "close issues task is added"() {
@@ -49,7 +34,6 @@ class PlumbrIntegrationPluginTest extends Specification {
 
   def "close issues task gets build number from project's version"() {
     when:
-    project.version = '1984'
     project.apply plugin: 'eu.plumbr.integration'
 
     then:
@@ -60,7 +44,6 @@ class PlumbrIntegrationPluginTest extends Specification {
 
   def "close issues task closes all resolved issues released in given build"() {
     setup:
-    project.version = '1984'
     project.apply plugin: 'eu.plumbr.integration'
 
     CloseReleasedIssuesTask task = project.tasks.findByName(CLOSE_ISSUES_TASK_NAME) as CloseReleasedIssuesTask
@@ -79,7 +62,6 @@ class PlumbrIntegrationPluginTest extends Specification {
 
   def "close issues task handles gracefully build without issues"() {
     setup:
-    project.version = '1984'
     project.apply plugin: 'eu.plumbr.integration'
 
     CloseReleasedIssuesTask task = project.tasks.findByName(CLOSE_ISSUES_TASK_NAME) as CloseReleasedIssuesTask
@@ -127,7 +109,6 @@ class PlumbrIntegrationPluginTest extends Specification {
     project.tasks.findByName("promoteOOMToStaging") == null
 
     when:
-    System.setProperty(buildNumberEnvironmentProperty, '42')
     project.apply plugin: 'eu.plumbr.integration'
 
     then:
@@ -136,7 +117,7 @@ class PlumbrIntegrationPluginTest extends Specification {
     task.description != null
     task.buildName == 'OOM'
     task.targetRepo == 'staging'
-    task.buildNumber == '42'
+    task.buildNumber == '1984'
   }
 
   def "artifactory client is created in project if user is given"() {
@@ -151,7 +132,7 @@ class PlumbrIntegrationPluginTest extends Specification {
     project.artifactoryClient instanceof ArtifactoryClient
   }
 
-  def "artifactory client property is created in project if no artifactory user is given"() {
+  def "artifactory client property is not created in project if no artifactory user is given"() {
     expect:
     !project.hasProperty('artifactoryClient')
 

@@ -4,6 +4,7 @@ import eu.plumbr.integration.PlumbrVersion
 import groovyx.net.http.ContentType
 import groovyx.net.http.HttpResponseException
 import groovyx.net.http.RESTClient
+import java.nio.file.Files
 import org.gradle.api.logging.Logger
 import org.gradle.api.logging.Logging
 import org.joda.time.DateTime
@@ -88,5 +89,13 @@ items.find({
     } else {
       return []
     }
+  }
+
+  @Override
+  void downloadArtifact(File destination, String fullPath) {
+    def path = destination.toPath()
+    Files.createDirectories(path.parent)
+    Files.createFile(path)
+    destination << restClient.get(path: fullPath, contentType: ContentType.BINARY).data
   }
 }

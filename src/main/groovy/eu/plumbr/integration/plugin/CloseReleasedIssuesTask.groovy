@@ -32,7 +32,7 @@ class CloseReleasedIssuesTask extends DefaultTask {
       def matcher = taskName =~ /close(.+)ReleasedIssues/
       if (matcher) {
         CloseReleasedIssuesTask task = project.task(taskName, type: CloseReleasedIssuesTask) as CloseReleasedIssuesTask
-        task.buildNumber = project.version
+        task.buildNumber = project.version.buildNumber
         task.jiraClient = jiraClient
         task.buildName = matcher.group(1)
         if (artifactoryClient) {

@@ -25,7 +25,7 @@ class PlumbrVersionTaskTest extends Specification {
   def "buildNumber can be overridden via environment"() {
     setup:
     GroovyMock(System, global: true)
-    System.getenv('BUILD_NUMBER') >> '4269'
+    System.getenv(PlumbrVersionTask.BUILD_NUMBER) >> '4269'
 
     when:
     PlumbrVersionTask.apply(project)
@@ -38,7 +38,7 @@ class PlumbrVersionTaskTest extends Specification {
   def "version can be overridden via system properties"() {
     setup:
     GroovyMock(System, global: true)
-    System.getProperty('SOURCE_VERSION') >> '15.09.04.1234'
+    System.getProperty(PlumbrVersionTask.SOURCE_VERSION) >> '15.09.04.1234'
 
     when:
     PlumbrVersionTask.apply(project)
@@ -52,8 +52,8 @@ class PlumbrVersionTaskTest extends Specification {
   def "version override wins over buildNumber override"() {
     setup:
     GroovyMock(System, global: true)
-    System.getenv('BUILD_NUMBER') >> '4269'
-    System.getProperty('SOURCE_VERSION') >> '15.09.04.9876'
+    System.getenv(PlumbrVersionTask.BUILD_NUMBER) >> '4269'
+    System.getProperty(PlumbrVersionTask.SOURCE_VERSION) >> '15.09.04.9876'
 
     when:
     PlumbrVersionTask.apply(project)

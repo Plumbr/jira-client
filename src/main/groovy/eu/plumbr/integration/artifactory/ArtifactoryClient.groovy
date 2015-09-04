@@ -13,4 +13,6 @@ interface ArtifactoryClient {
   PlumbrVersion latestBuildVersion(String artifactId, String version)
 
   PlumbrVersion latestBuildVersion(String artifactId)
+
+  void downloadArtifact(File destination, String fullPath)
 }
