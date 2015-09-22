@@ -73,7 +73,7 @@ class ArtifactoryRestClientTest extends Specification {
     artifactoryRestClient.restClient.get(_) >> [data: [text: '15.09.03.4492']]
 
     when:
-    def plumbrVersion = artifactoryRestClient.latestBuildVersion('agent')
+    def plumbrVersion = artifactoryRestClient.latestVersion('agent')
 
     then:
     plumbrVersion.version == '15.09.03'

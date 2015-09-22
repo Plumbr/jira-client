@@ -10,9 +10,11 @@ interface ArtifactoryClient {
 
   void promoteBuild(String buildName, String buildNumber, String targetRepo)
 
-  PlumbrVersion latestBuildVersion(String artifactId, String version)
+  PlumbrVersion latestVersion(String artifactId, String version)
 
-  PlumbrVersion latestBuildVersion(String artifactId)
+  PlumbrVersion latestVersion(String artifactId)
+
+  String buildStatus(String buildName, String version)
 
   void downloadArtifact(File destination, String fullPath)
 }

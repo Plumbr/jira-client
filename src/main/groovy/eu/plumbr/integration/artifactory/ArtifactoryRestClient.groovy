@@ -67,10 +67,10 @@ items.find({
   }
 
   @Override
-  PlumbrVersion latestBuildVersion(String artifactId, String version = '??.*') {
+  PlumbrVersion latestVersion(String artifactId, String version = '??.*') {
     new PlumbrVersion(restClient.get(
         path: '/plumbr/api/search/latestVersion',
-        query: [g: 'eu.plumbr', a: artifactId, repos: 'builds', v: version],
+        query: [g: 'eu.plumbr', a: artifactId, v: version],
         contentType: ContentType.TEXT
     ).data.text as String)
   }
@@ -98,4 +98,15 @@ items.find({
     Files.createFile(path)
     destination << restClient.get(path: fullPath, contentType: ContentType.BINARY).data
   }
+
+  @Override
+  String buildStatus(String buildName, String buildNumber) {
+    def info = restClient.get(path: "/plumbr/api/build/${buildName}/${buildNumber}", contentType: ContentType.JSON).data
+    def statuses = info.buildInfo.statuses
+    if (!statuses) {
+      return null
+    }
+    statuses.sort { it.timestampDate }.last().status
+  }
+
 }
