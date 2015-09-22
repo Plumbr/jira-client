@@ -27,7 +27,7 @@ dependencies {
 }
 
 sourceCompatibility = 1.7
-version = '0.3.5'
+version = '0.3.6'
 group = 'eu.plumbr'
 
 publishing {
